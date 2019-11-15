@@ -1,11 +1,12 @@
 import setuptools
+from pyrts import _version
 
-with open("README.md", "r") as fh:
+with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="python-microRTS",
-    version="0.0.1",
+    version=_version,
     author="Chris Bamford",
     author_email="chrisbam4d@gmail.com",
     description="MicroRTS client for python",
