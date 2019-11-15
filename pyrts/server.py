@@ -6,6 +6,8 @@ from abc import abstractmethod
 
 
 class Action:
+    """Class containing the actions accepted by MicroRTS. Variable names indicate their meaning and integer values are used in the JSON serialization.
+    """
     NONE = 0
     MOVE = 1
     HARVEST = 2
@@ -19,6 +21,8 @@ class Action:
 
 
 class Direction:
+    """Class containing directions, as accepted by MicroRTS in their action parameters. Variable names indicate their meaning and integer values are used in the JSON serialization.
+    """
     UP = 0
     RIGHT = 1
     DOWN = 2
@@ -30,6 +34,8 @@ class Direction:
 
 
 class Server(object):
+    """Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agentes who which to interact with MicroRTS.
+    """
 
     def __init__(self):
         logging.basicConfig()
@@ -63,9 +69,9 @@ class Server(object):
         return message_parts
 
     def _filter_invalid_actions(self, actions, state):
-        """
-        Get the units that are currently performing actions from the state and remove any actions that refer to these
+        """Get the units that are currently performing actions from the state and remove any actions that refer to these
         units
+        
         :return: A filtered list of all the actions that can be applied
         """
         busy_units = self.get_busy_units(state)
