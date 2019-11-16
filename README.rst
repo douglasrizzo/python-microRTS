@@ -6,6 +6,10 @@ python-microRTS
 A python client library for
 `MicroRTS <https://github.com/santiontanon/microrts>`__.
 
+This project is a fork of the original python-microRTS, by Chris Bramford. As per the Apache License 2.0, a copy of the license is kept in the project and changes in the code (which are still minor) are documented in the `commit history <https://github.com/douglasrizzo/python-microRTS>`__ of the project.
+
+If you're on GitHub, you can view the project documentation `here <https://douglasrizzo.com.br/python-microRTS>`__.
+
 Installation
 ------------
 
