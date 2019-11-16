@@ -29,10 +29,10 @@ Create a controller
 ~~~~~~~~~~~~~~~~~~~
 
 Create a class that inherits from the ``pyrts.server.Server`` class, in
-``server.py`` and implement the ``get_action()`` method. It is also a
-good idea to instantiate your controller and call the ``start()`` method
-in the main function of your module, so that you can run this controller
-as a standalone script later.
+``server.py``, pass the ID of the player (0 or 1) and implement the
+``get_action()`` method. It is also a good idea to instantiate your
+controller and call the ``start()`` method in the main function of your
+module, so that you can run this controller as a standalone script later.
 
 .. code:: python
 
@@ -40,13 +40,16 @@ as a standalone script later.
 
    class AI(server):
 
-       def get_action(state):
-           # In here implement the algorithm that takes the state and creates the action
-           return [ ..  list of actions]
+        def __init__(self, player_id):
+            super(AI, self).__init__(player_id)
 
-   if __name__ == '__main__':
-       ai = AI()
-       ai.start()
+        def get_action(state):
+            # In here implement the algorithm that takes the state and creates the action
+            return [ ..  list of actions]
+
+    if __name__ == '__main__':
+        ai = AI(0)
+        ai.start()
 
 The method must return a list of actions. Each action is a dict composed
 of a unit ID and the action it should execute. If the action has
