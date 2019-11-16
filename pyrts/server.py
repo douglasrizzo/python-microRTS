@@ -37,11 +37,12 @@ class Server(object):
     """Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agentes who which to interact with MicroRTS.
     """
 
-    def __init__(self):
+    def __init__(self, player_id):
         logging.basicConfig()
         self._logger = logging.getLogger('RTSServer')
         self._logger.setLevel(logging.DEBUG)
-
+        
+        self.player_id = player_id
         self._max_x = None
         self._max_y = None
 
@@ -88,22 +89,21 @@ class Server(object):
         pass
 
     def _process_state_and_get_action(self, state, gameover):
-        # TODO it would be nice if get_action is called when gameover == True,
-        # so that the controller can find out if it has won or lost
+        if not gameover:
+            self.get_grid_from_state(state)
+
+        actions = self.get_action(state, gameover)
+
         if gameover:
             return None
-            
-        actions = self.get_action(state, gameover)
-        self.get_grid_from_state(state)
-        return self._filter_invalid_actions(actions, state)
+        else:
+            return self._filter_invalid_actions(actions, state)
 
     def _wait_for_get_action(self):
         message_parts = self._wait_for_message()
         command = message_parts[0].split()
 
-        gameover = command[0] == 'gameOver'
-
-        if command[0] == 'getAction':
+        if command[0] in ['getAction', 'gameOver']:
             try:
                 state = json.loads(message_parts[1])
                 self._logger.debug('state: %s' % state)
@@ -113,7 +113,10 @@ class Server(object):
                 )
                 raise e
 
-            return self._process_state_and_get_action(state, gameover)
+            return self._process_state_and_get_action(state, command[0] == 'gameOver')
+
+        else:
+            return []
 
     def _get_budgets(self):
         _, self._time_budget, self._iteration_budget = self._wait_for_message()[0].split()
@@ -150,23 +153,23 @@ class Server(object):
             ]
         )
 
-    def _get_valid_base_positions(self, state, player_id):
+    def _get_valid_base_positions(self, state):
         return set(
             [
                 (unit['x'], unit['y']) for unit in state['pgs']['units']
-                if unit['type'] == "Base" and unit['player'] == player_id
+                if unit['type'] == "Base" and unit['player'] == self.player_id
             ]
         )
 
-    def _get_valid_attack_positions(self, state, player_id):
+    def _get_valid_attack_positions(self, state):
         return set(
             [
                 (unit['x'], unit['y']) for unit in state['pgs']['units']
-                if unit['type'] != "Resource" and unit['player'] != player_id
+                if unit['type'] != "Resource" and unit['player'] != self.player_id
             ]
         )
 
-    def get_valid_action_positions_for_state(self, state, player_id):
+    def get_valid_action_positions_for_state(self, state):
         """
         Returns a tuple containing the following:
         invalid_move_positions - a set of all the positions that cannot be moved into
@@ -178,10 +181,9 @@ class Server(object):
         """
 
         return (
-            self._get_invalid_move_positions(state),
-            self._get_valid_harvest_positions(state),
-            self._get_valid_base_positions(state, player_id),
-            self._get_valid_attack_positions(state, player_id)
+            self._get_invalid_move_positions(state), self._get_valid_harvest_positions(state),
+            self._get_valid_base_positions(state),
+            self._get_valid_attack_positions(state)
         )
 
     def get_valid_actions_for_unit(self, unit, available_actions, valid_positions):
@@ -396,6 +398,7 @@ class Server(object):
         # Get the headers
         self._get_budgets()
         self._get_utt()
+        self._get_budgets()
 
         gameover = False
 
