@@ -1,0 +1,630 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyrts.server &mdash; python-microRTS 0.0.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> python-microRTS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../server.html">The server module</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">python-microRTS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyrts.server</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyrts.server</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">socket</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="k">import</span> <span class="n">abstractmethod</span>
+
+
+<div class="viewcode-block" id="Action"><a class="viewcode-back" href="../../server.html#pyrts.server.Action">[docs]</a><span class="k">class</span> <span class="nc">Action</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class containing the actions accepted by MicroRTS. Variable names indicate their meaning and integer values are used in the JSON serialization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">MOVE</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">HARVEST</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">RETURN</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">PRODUCE</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">ATTACK</span> <span class="o">=</span> <span class="mi">5</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">as_list</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Action</span><span class="o">.</span><span class="n">NONE</span><span class="p">,</span> <span class="n">Action</span><span class="o">.</span><span class="n">MOVE</span><span class="p">,</span> <span class="n">Action</span><span class="o">.</span><span class="n">HARVEST</span><span class="p">,</span> <span class="n">Action</span><span class="o">.</span><span class="n">RETURN</span><span class="p">,</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">,</span> <span class="n">Action</span><span class="o">.</span><span class="n">ATTACK</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Direction"><a class="viewcode-back" href="../../server.html#pyrts.server.Direction">[docs]</a><span class="k">class</span> <span class="nc">Direction</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class containing directions, as accepted by MicroRTS in their action parameters. Variable names indicate their meaning and integer values are used in the JSON serialization.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">UP</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">DOWN</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">LEFT</span> <span class="o">=</span> <span class="mi">3</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">as_list</span><span class="p">():</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Direction</span><span class="o">.</span><span class="n">UP</span><span class="p">,</span> <span class="n">Direction</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">,</span> <span class="n">Direction</span><span class="o">.</span><span class="n">DOWN</span><span class="p">,</span> <span class="n">Direction</span><span class="o">.</span><span class="n">LEFT</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Server"><a class="viewcode-back" href="../../server.html#pyrts.server.Server">[docs]</a><span class="k">class</span> <span class="nc">Server</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agentes who which to interact with MicroRTS.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_id</span><span class="p">):</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;RTSServer&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">player_id</span> <span class="o">=</span> <span class="n">player_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_x</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_y</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s</span> <span class="o">=</span> <span class="n">socket</span><span class="o">.</span><span class="n">socket</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">AF_INET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SOCK_STREAM</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">setsockopt</span><span class="p">(</span><span class="n">socket</span><span class="o">.</span><span class="n">SOL_SOCKET</span><span class="p">,</span> <span class="n">socket</span><span class="o">.</span><span class="n">SO_REUSEADDR</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_ack</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_send</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data_string</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_string</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">data_string</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_wait_for_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">environment_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="mi">8192</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">environment_message</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="sa">u</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;ACK&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Message: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">environment_message</span><span class="p">)</span>
+        <span class="n">message_parts</span> <span class="o">=</span> <span class="n">environment_message</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">message_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">message_parts</span>
+
+    <span class="k">def</span> <span class="nf">_filter_invalid_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the units that are currently performing actions from the state and remove any actions that refer to these</span>
+<span class="sd">        units</span>
+
+<span class="sd">        :return: A filtered list of all the actions that can be applied</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">busy_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_busy_units</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">action</span> <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span> <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;unitID&#39;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">busy_units</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Server.get_action"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_action">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">gameover</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Send a list of actions to MicroRTS, given a state. Override this in</span>
+<span class="sd">           the super class.</span>
+
+<span class="sd">           Be aware that, if `gameover = True`, the action provided will not be</span>
+<span class="sd">           processed by MicroRTS.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_uncompress_terrain</span><span class="p">(</span><span class="n">terrain</span><span class="p">):</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">terrain</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">terrain</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">t</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">t</span> <span class="o">+=</span> <span class="s1">&#39;0&#39;</span> <span class="k">if</span> <span class="n">terrain</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span> <span class="k">else</span> <span class="s1">&#39;1&#39;</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">c</span> <span class="o">+=</span> <span class="n">terrain</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">+=</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">t</span>
+
+    <span class="k">def</span> <span class="nf">_process_state_and_get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">gameover</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">gameover</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">get_grid_from_state</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s1">&#39;A&#39;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;terrain&#39;</span><span class="p">]</span> <span class="ow">or</span> <span class="s1">&#39;B&#39;</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;terrain&#39;</span><span class="p">]:</span>
+            <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;terrain&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Server</span><span class="o">.</span><span class="n">_uncompress_terrain</span><span class="p">(</span><span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;terrain&#39;</span><span class="p">])</span>
+
+        <span class="n">actions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">gameover</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">gameover</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filter_invalid_actions</span><span class="p">(</span><span class="n">actions</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_wait_for_get_action</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">message_parts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_message</span><span class="p">()</span>
+        <span class="n">command</span> <span class="o">=</span> <span class="n">message_parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;getAction&#39;</span><span class="p">,</span> <span class="s1">&#39;gameOver&#39;</span><span class="p">]:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">state</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">message_parts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;state: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">state</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">json</span><span class="o">.</span><span class="n">decoder</span><span class="o">.</span><span class="n">JSONDecodeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">fatal</span><span class="p">(</span>
+                    <span class="s1">&#39;The message size has gotten larger what is recovered by the socket.&#39;</span>
+                <span class="p">)</span>
+                <span class="k">raise</span> <span class="n">e</span>
+
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_state_and_get_action</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">command</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;gameOver&#39;</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+    <span class="k">def</span> <span class="nf">_get_budgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_time_budget</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iteration_budget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_message</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ack</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_utt</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">utt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_message</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type_table</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">utt</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ack</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Server.get_unit_type_table"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_unit_type_table">[docs]</a>    <span class="k">def</span> <span class="nf">get_unit_type_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the unit type table, which describes the environment</span>
+
+<span class="sd">        :return: [description]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type_table</span></div>
+
+<div class="viewcode-block" id="Server.get_busy_units"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_busy_units">[docs]</a>    <span class="k">def</span> <span class="nf">get_busy_units</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get a list of the units that are currently busy performing an action</span>
+
+<span class="sd">        :param state: [description]</span>
+<span class="sd">        :return: [description]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">unit</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;actions&#39;</span><span class="p">]]</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_invalid_move_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">([(</span><span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]])</span>
+
+    <span class="k">def</span> <span class="nf">_get_valid_harvest_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Resource&quot;</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_valid_base_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Base&quot;</span> <span class="ow">and</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;player&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">player_id</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_valid_attack_positions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">set</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="p">(</span><span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">])</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;units&#39;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;Resource&quot;</span> <span class="ow">and</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;player&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">player_id</span>
+            <span class="p">]</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Server.get_valid_action_positions_for_state"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_valid_action_positions_for_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_valid_action_positions_for_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a tuple containing the following:</span>
+<span class="sd">        invalid_move_positions - a set of all the positions that cannot be moved into</span>
+<span class="sd">        valid_harvest_positions -  a set of all the resource locations</span>
+<span class="sd">        valid_base_positions - a set of the positions of bases on the current players team</span>
+<span class="sd">        valid_attack_positions - a set of the positions that can be attacked</span>
+
+<span class="sd">        These positions can be cross-referenced with possible actions that units can perform, to make sure no invalid actions are sent to the environment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_invalid_move_positions</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_valid_harvest_positions</span><span class="p">(</span><span class="n">state</span><span class="p">),</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_valid_base_positions</span><span class="p">(</span><span class="n">state</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_valid_attack_positions</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="Server.get_valid_actions_for_unit"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_valid_actions_for_unit">[docs]</a>    <span class="k">def</span> <span class="nf">get_valid_actions_for_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit</span><span class="p">,</span> <span class="n">available_actions</span><span class="p">,</span> <span class="n">valid_positions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the actions that are valid for a unit to perform.</span>
+
+<span class="sd">        An action is INVALID if the action cannot be performed in the environment.</span>
+
+<span class="sd">        For example, if the action is MOVE(left) but the position to the left of the unit is blocked</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="p">(</span>
+            <span class="n">invalid_move_positions</span><span class="p">,</span> <span class="n">valid_harvest_positions</span><span class="p">,</span> <span class="n">valid_base_positions</span><span class="p">,</span>
+            <span class="n">valid_attack_positions</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">valid_positions</span>
+
+        <span class="n">valid_actions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;unit [</span><span class="si">%s</span><span class="s1">] position [</span><span class="si">%d</span><span class="s1">, </span><span class="si">%d</span><span class="s1">]&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">unit</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]))</span>
+
+        <span class="c1"># For all the actions make sure that those actions are possible</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">available_actions</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_action_position</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">unit</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">MOVE</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_on_grid</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="ow">and</span> <span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">invalid_move_positions</span><span class="p">:</span>
+                    <span class="n">valid_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">HARVEST</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_on_grid</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="ow">and</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">valid_harvest_positions</span><span class="p">:</span>
+                    <span class="n">valid_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">RETURN</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_on_grid</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="ow">and</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">valid_base_positions</span><span class="p">:</span>
+                    <span class="n">valid_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">ATTACK</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_on_grid</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="ow">and</span> <span class="n">position</span> <span class="ow">in</span> <span class="n">valid_attack_positions</span><span class="p">:</span>
+                    <span class="n">action</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">action</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                    <span class="n">valid_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">:</span>
+                <span class="c1"># Unavailable produce positions are the same as unavailable move positions</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_on_grid</span><span class="p">(</span><span class="n">position</span><span class="p">)</span> <span class="ow">and</span> <span class="n">position</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">invalid_move_positions</span><span class="p">:</span>
+                    <span class="n">valid_actions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s1">&#39;valid actions for unit [</span><span class="si">%s</span><span class="s1">]: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">unit</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">],</span> <span class="n">valid_actions</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">valid_actions</span></div>
+
+    <span class="k">def</span> <span class="nf">get_action_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Direction</span><span class="o">.</span><span class="n">UP</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Direction</span><span class="o">.</span><span class="n">RIGHT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Direction</span><span class="o">.</span><span class="n">DOWN</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">],</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;parameter&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Direction</span><span class="o">.</span><span class="n">LEFT</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;y&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_is_on_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_x</span> <span class="ow">and</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_y</span>
+
+<div class="viewcode-block" id="Server.get_available_actions_by_type_name"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_available_actions_by_type_name">[docs]</a>    <span class="k">def</span> <span class="nf">get_available_actions_by_type_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">unit_type_table</span><span class="p">,</span> <span class="n">type_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Given the unit type and the unit type table, return a complete list of the possible actions that unit can perform</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">available_actions</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Get unit type by type name</span>
+        <span class="n">unit_type</span> <span class="o">=</span> <span class="p">[</span><span class="n">unit</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="n">unit_type_table</span><span class="p">[</span><span class="s1">&#39;unitTypes&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">unit</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">type_name</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># canMove</span>
+        <span class="k">if</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;canMove&#39;</span><span class="p">]:</span>
+            <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_directional_actions</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">MOVE</span><span class="p">))</span>
+
+        <span class="c1"># canAttack</span>
+        <span class="k">if</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;canAttack&#39;</span><span class="p">]:</span>
+            <span class="c1"># This is more complicated because the params have x-y coordinates and a range</span>
+            <span class="k">if</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;attackRange&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_directional_actions</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">ATTACK</span><span class="p">))</span>
+
+        <span class="c1"># canHarvest</span>
+        <span class="k">if</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;canHarvest&#39;</span><span class="p">]:</span>
+            <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_directional_actions</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">HARVEST</span><span class="p">))</span>
+            <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_get_directional_actions</span><span class="p">(</span><span class="n">Action</span><span class="o">.</span><span class="n">RETURN</span><span class="p">))</span>
+
+        <span class="c1"># If this unit can produce anything</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;produces&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">,</span>
+                        <span class="s1">&#39;unitType&#39;</span><span class="p">:</span> <span class="n">unit_type_name</span><span class="p">,</span>
+                        <span class="s1">&#39;parameter&#39;</span><span class="p">:</span> <span class="n">Direction</span><span class="o">.</span><span class="n">UP</span>
+                    <span class="p">}</span> <span class="k">for</span> <span class="n">unit_type_name</span> <span class="ow">in</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;produces&#39;</span><span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">,</span>
+                        <span class="s1">&#39;unitType&#39;</span><span class="p">:</span> <span class="n">unit_type_name</span><span class="p">,</span>
+                        <span class="s1">&#39;parameter&#39;</span><span class="p">:</span> <span class="n">Direction</span><span class="o">.</span><span class="n">RIGHT</span>
+                    <span class="p">}</span> <span class="k">for</span> <span class="n">unit_type_name</span> <span class="ow">in</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;produces&#39;</span><span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">,</span>
+                        <span class="s1">&#39;unitType&#39;</span><span class="p">:</span> <span class="n">unit_type_name</span><span class="p">,</span>
+                        <span class="s1">&#39;parameter&#39;</span><span class="p">:</span> <span class="n">Direction</span><span class="o">.</span><span class="n">DOWN</span>
+                    <span class="p">}</span> <span class="k">for</span> <span class="n">unit_type_name</span> <span class="ow">in</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;produces&#39;</span><span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">available_actions</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">{</span>
+                        <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">,</span>
+                        <span class="s1">&#39;unitType&#39;</span><span class="p">:</span> <span class="n">unit_type_name</span><span class="p">,</span>
+                        <span class="s1">&#39;parameter&#39;</span><span class="p">:</span> <span class="n">Direction</span><span class="o">.</span><span class="n">LEFT</span>
+                    <span class="p">}</span> <span class="k">for</span> <span class="n">unit_type_name</span> <span class="ow">in</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;produces&#39;</span><span class="p">]</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">available_actions</span></div>
+
+<div class="viewcode-block" id="Server.get_resources_for_player"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_resources_for_player">[docs]</a>    <span class="k">def</span> <span class="nf">get_resources_for_player</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">for_player</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get the number of resources the player currently has available</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">for_player</span><span class="p">:</span>
+            <span class="n">for_player</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">player</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;players&#39;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">player</span><span class="p">[</span><span class="s1">&#39;ID&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">for_player</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">player</span><span class="p">[</span><span class="s1">&#39;resources&#39;</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_directional_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action_type</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="n">action_type</span><span class="p">,</span> <span class="s1">&#39;parameter&#39;</span><span class="p">:</span> <span class="n">direction</span><span class="p">}</span> <span class="k">for</span> <span class="n">direction</span> <span class="ow">in</span> <span class="n">Direction</span><span class="o">.</span><span class="n">as_list</span><span class="p">()]</span>
+
+<div class="viewcode-block" id="Server.get_grid_from_state"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_grid_from_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_grid_from_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets the width and height of the environment</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_x</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;width&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_max_y</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;pgs&#39;</span><span class="p">][</span><span class="s1">&#39;height&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_y</span></div>
+
+<div class="viewcode-block" id="Server.get_resource_usage_from_state"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_resource_usage_from_state">[docs]</a>    <span class="k">def</span> <span class="nf">get_resource_usage_from_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        How many resources are currently being used to build units</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">used_resources</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">unit_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type_table</span><span class="p">[</span><span class="s1">&#39;unitTypes&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">state</span><span class="p">[</span><span class="s1">&#39;actions&#39;</span><span class="p">]:</span>
+            <span class="n">unit_action</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">unit_action</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">unit_type</span> <span class="ow">in</span> <span class="n">unit_types</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">unit_action</span><span class="p">[</span><span class="s1">&#39;unitType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span>
+                        <span class="n">used_resources</span> <span class="o">+=</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">used_resources</span></div>
+
+<div class="viewcode-block" id="Server.get_resource_usage_from_actions"><a class="viewcode-back" href="../../server.html#pyrts.server.Server.get_resource_usage_from_actions">[docs]</a>    <span class="k">def</span> <span class="nf">get_resource_usage_from_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actions</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        From a list of actions, sum the cost of the actions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">used_resources</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">unit_types</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unit_type_table</span><span class="p">[</span><span class="s1">&#39;unitTypes&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">actions</span><span class="p">:</span>
+            <span class="n">unit_action</span> <span class="o">=</span> <span class="n">action</span><span class="p">[</span><span class="s1">&#39;unitAction&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">unit_action</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">Action</span><span class="o">.</span><span class="n">PRODUCE</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">unit_type</span> <span class="ow">in</span> <span class="n">unit_types</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">unit_action</span><span class="p">[</span><span class="s1">&#39;unitType&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]:</span>
+                        <span class="n">used_resources</span> <span class="o">+=</span> <span class="n">unit_type</span><span class="p">[</span><span class="s1">&#39;cost&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">used_resources</span></div>
+
+    <span class="k">def</span> <span class="nf">start</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Socket created&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Bind socket to local host and port</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">bind</span><span class="p">((</span><span class="s1">&#39;localhost&#39;</span><span class="p">,</span> <span class="mi">9898</span><span class="p">))</span>
+        <span class="k">except</span> <span class="n">socket</span><span class="o">.</span><span class="n">error</span> <span class="k">as</span> <span class="n">msg</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Bind failed. Error Code : &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39; Message &#39;</span> <span class="o">+</span> <span class="n">msg</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+            <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Socket bind complete&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Start listening on socket</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">listen</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Socket now listening&#39;</span><span class="p">)</span>
+
+        <span class="c1"># now keep talking with the client</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">,</span> <span class="n">addr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_connection</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_ack</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Connected with &#39;</span> <span class="o">+</span> <span class="n">addr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">addr</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+        <span class="c1"># Get the headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_budgets</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_utt</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_get_budgets</span><span class="p">()</span>
+
+        <span class="n">gameover</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">while</span> <span class="ow">not</span> <span class="n">gameover</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_wait_for_get_action</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Sending action </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">action</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_send</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s1">&#39;Game has ended&#39;</span><span class="p">)</span>
+                <span class="n">gameover</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_s</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Chris Bamford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+
+  
+
+  <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
