@@ -72,7 +72,7 @@ class Server(object):
     def _filter_invalid_actions(self, actions, state):
         """Get the units that are currently performing actions from the state and remove any actions that refer to these
         units
-        
+
         :return: A filtered list of all the actions that can be applied
         """
         busy_units = self.get_busy_units(state)
@@ -82,7 +82,7 @@ class Server(object):
     def get_action(self, state, gameover):
         """Send a list of actions to MicroRTS, given a state. Override this in
            the super class.
-           
+
            Be aware that, if `gameover = True`, the action provided will not be
            processed by MicroRTS.
         """
@@ -111,6 +111,8 @@ class Server(object):
     def _process_state_and_get_action(self, state, gameover):
         if not gameover:
             self.get_grid_from_state(state)
+
+        if 'A' in state['pgs']['terrain'] or 'B' in state['pgs']['terrain']:
             state['pgs']['terrain'] = Server._uncompress_terrain(state['pgs']['terrain'])
 
         actions = self.get_action(state, gameover)
@@ -150,7 +152,7 @@ class Server(object):
 
     def get_unit_type_table(self):
         """Returns the unit type table, which describes the environment
-        
+
         :return: [description]
         """
         return self._unit_type_table
