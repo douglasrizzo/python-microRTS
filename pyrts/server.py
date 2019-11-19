@@ -41,7 +41,7 @@ class Server(object):
         logging.basicConfig()
         self._logger = logging.getLogger('RTSServer')
         self._logger.setLevel(logging.DEBUG)
-        
+
         self.player_id = player_id
         self._max_x = None
         self._max_y = None
@@ -88,9 +88,30 @@ class Server(object):
         """
         pass
 
+    @staticmethod
+    def _uncompress_terrain(terrain):
+        t = ''
+        c = ''
+
+        for i in range(len(terrain)):
+            if terrain[i] in ['A', 'B']:
+                if len(c) > 0:
+                    t += t[-1] * (int(c) - 1)
+                    c = ''
+                t += terrain[i]
+
+            else:
+                c += terrain[i]
+
+        if len(c) > 0:
+            t += t[-1] * (int(c) - 1)
+
+        return t
+
     def _process_state_and_get_action(self, state, gameover):
         if not gameover:
             self.get_grid_from_state(state)
+            state['pgs']['terrain'] = Server._uncompress_terrain(state['pgs']['terrain'])
 
         actions = self.get_action(state, gameover)
 
@@ -182,8 +203,7 @@ class Server(object):
 
         return (
             self._get_invalid_move_positions(state), self._get_valid_harvest_positions(state),
-            self._get_valid_base_positions(state),
-            self._get_valid_attack_positions(state)
+            self._get_valid_base_positions(state), self._get_valid_attack_positions(state)
         )
 
     def get_valid_actions_for_unit(self, unit, available_actions, valid_positions):
@@ -196,11 +216,9 @@ class Server(object):
         """
 
         (
-            invalid_move_positions,
-            valid_harvest_positions,
-            valid_base_positions,
+            invalid_move_positions, valid_harvest_positions, valid_base_positions,
             valid_attack_positions
-         ) = valid_positions
+        ) = valid_positions
 
         valid_actions = []
 
