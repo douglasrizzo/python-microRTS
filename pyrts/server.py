@@ -41,7 +41,7 @@ class Server(object):
         logging.basicConfig()
         self._logger = logging.getLogger('RTSServer')
         self._logger.setLevel(logging.DEBUG)
-        
+
         self.player_id = player_id
         self._max_x = None
         self._max_y = None
@@ -72,7 +72,7 @@ class Server(object):
     def _filter_invalid_actions(self, actions, state):
         """Get the units that are currently performing actions from the state and remove any actions that refer to these
         units
-        
+
         :return: A filtered list of all the actions that can be applied
         """
         busy_units = self.get_busy_units(state)
@@ -82,15 +82,38 @@ class Server(object):
     def get_action(self, state, gameover):
         """Send a list of actions to MicroRTS, given a state. Override this in
            the super class.
-           
+
            Be aware that, if `gameover = True`, the action provided will not be
            processed by MicroRTS.
         """
         pass
 
+    @staticmethod
+    def _uncompress_terrain(terrain):
+        t = ''
+        c = ''
+
+        for i in range(len(terrain)):
+            if terrain[i] in ['A', 'B']:
+                if len(c) > 0:
+                    t += t[-1] * (int(c) - 1)
+                    c = ''
+                t += '0' if terrain[i] == 'A' else '1'
+
+            else:
+                c += terrain[i]
+
+        if len(c) > 0:
+            t += t[-1] * (int(c) - 1)
+
+        return t
+
     def _process_state_and_get_action(self, state, gameover):
         if not gameover:
             self.get_grid_from_state(state)
+
+        if 'A' in state['pgs']['terrain'] or 'B' in state['pgs']['terrain']:
+            state['pgs']['terrain'] = Server._uncompress_terrain(state['pgs']['terrain'])
 
         actions = self.get_action(state, gameover)
 
@@ -129,7 +152,7 @@ class Server(object):
 
     def get_unit_type_table(self):
         """Returns the unit type table, which describes the environment
-        
+
         :return: [description]
         """
         return self._unit_type_table
@@ -182,8 +205,7 @@ class Server(object):
 
         return (
             self._get_invalid_move_positions(state), self._get_valid_harvest_positions(state),
-            self._get_valid_base_positions(state),
-            self._get_valid_attack_positions(state)
+            self._get_valid_base_positions(state), self._get_valid_attack_positions(state)
         )
 
     def get_valid_actions_for_unit(self, unit, available_actions, valid_positions):
@@ -196,11 +218,9 @@ class Server(object):
         """
 
         (
-            invalid_move_positions,
-            valid_harvest_positions,
-            valid_base_positions,
+            invalid_move_positions, valid_harvest_positions, valid_base_positions,
             valid_attack_positions
-         ) = valid_positions
+        ) = valid_positions
 
         valid_actions = []
 
