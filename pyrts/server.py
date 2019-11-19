@@ -98,7 +98,7 @@ class Server(object):
                 if len(c) > 0:
                     t += t[-1] * (int(c) - 1)
                     c = ''
-                t += terrain[i]
+                t += '0' if terrain[i] == 'A' else '1'
 
             else:
                 c += terrain[i]
