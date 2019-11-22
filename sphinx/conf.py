@@ -44,6 +44,7 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
     'sphinx.ext.autosummary',
+    'sphinx.ext.autosectionlabel',
     'matplotlib.sphinxext.plot_directive'
 ]
 

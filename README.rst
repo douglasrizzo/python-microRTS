@@ -20,11 +20,19 @@ Installation
 Overview
 --------
 
-The python client library makes use of the ``SocketAI`` interface in the
-MicroRTS library.
+By running microRTS in client mode, it will allow an external process to
+send actions to agents via a socket interface, as well as update the
+external process with the current state of the game. python-microRTS makes
+use of this feature, more specifically the ``SocketAI`` interface in the
+microRTS library.
 
-By default the socketAI library will connect to ``localhost:9898``. The
+By default the SocketAI library will connect to ``localhost:9898``. The
 python client is hard-coded to use these values also.
+
+:ref:`States <State>` are received as JSON strings, which are converted
+to Python ``dict`` objects. An :ref:`action <Action>` is created as a
+Python ``list`` of ``dict`` s, which is converted to a JSON string for
+socket communication.
 
 Usage
 -----
@@ -32,11 +40,12 @@ Usage
 Create a controller
 ~~~~~~~~~~~~~~~~~~~
 
-Create a class that inherits from the ``pyrts.server.Server`` class, in
-``server.py``, pass the ID of the player (0 or 1) and implement the
-``get_action()`` method. It is also a good idea to instantiate your
-controller and call the ``start()`` method in the main function of your
-module, so that you can run this controller as a standalone script later.
+Create a class that inherits from the :class:`pyrts.server.Server` class,
+in, pass the ID of the player (0 or 1) and implement the
+:py:func:`get_action() <pyrts.server.Server.get_action()>` method. It is also
+a good idea to instantiate your controller and call the
+:py:func:`start() <pyrts.server.Server.start()>` method in the main function of
+your module, so that you can run this controller as a standalone script later.
 
 .. code:: python
 
@@ -55,10 +64,12 @@ module, so that you can run this controller as a standalone script later.
         ai = AI(0)
         ai.start()
 
-The method must return a list of actions. Each action is a dict composed
-of a unit ID and the action it should execute. If the action has
-parameters, they should be passed too. Here is an example of a list of
-actions:
+The method must return a ``list`` of actions, one action for each unit in the
+game. The list is a standard Python list and each action is a Python ``dict``
+objects containing the unit ID and another ``dict`` containing the action and
+its parameters. Action names and codes are listed in
+:class:`pyrts.server.Action`. Action parameters, which are mostly directions to
+apply the actions, are listed in :class:`pyrts.server.Direction`.
 
 .. code:: python
 
