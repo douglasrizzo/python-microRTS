@@ -1,4 +1,4 @@
-The server module
+API documentation
 =================
 
 .. automodule:: pyrts.server

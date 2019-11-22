@@ -7,7 +7,7 @@
    :maxdepth: 2
    :caption: Contents:
 
-   server.rst
+   api.rst
 
 .. include:: ../README.rst
 
