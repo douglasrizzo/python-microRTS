@@ -8,6 +8,7 @@
    :caption: Contents:
 
    api.rst
+   messages.rst
 
 .. include:: ../README.rst
 
