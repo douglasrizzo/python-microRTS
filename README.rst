@@ -6,10 +6,16 @@ python-microRTS
 A python client library for
 `microRTS <https://github.com/santiontanon/microrts>`__.
 
-This project is a fork of the `original python-microRTS <https://github.com/Bam4d/python-microRTS>`__, by Chris Bramford. As per the Apache License 2.0, a copy of the license is kept in the project and changes in the code (which are still minor) are documented in the `commit history <https://github.com/douglasrizzo/python-microRTS>`__ of the project.
+This project is a fork of the
+`original python-microRTS <https://github.com/Bam4d/python-microRTS>`__, by
+Chris Bramford. As per the Apache License 2.0, a copy of the license is kept in
+the project and changes in the code (which are still minor) are documented in
+the `commit history <https://github.com/douglasrizzo/python-microRTS>`__ of the
+project.
 
-If you're on GitHub and want to see **usage examples, API documentation and message descriptions**,
-access the project documentation `here <https://douglasrizzo.com.br/python-microRTS>`__.
+If you're on GitHub and want to see
+**usage examples, API documentation and message descriptions**, access the
+project documentation `here <https://douglasrizzo.com.br/python-microRTS>`__.
 
 Installation
 ------------
@@ -30,10 +36,9 @@ microRTS library.
 By default the SocketAI library will connect to ``localhost:9898``. The
 python client is hard-coded to use these values also.
 
-:ref:`States <State>` are received as JSON strings, which are converted
-to Python ``dict`` objects. An :ref:`action <Action>` is created as a
-Python ``list`` of ``dict`` s, which is converted to a JSON string for
-socket communication.
+States are received as JSON strings, which are converted to Python ``dict``
+objects. An action is created as a Python ``list`` of ``dict`` s, which is
+converted to a JSON string for socket communication.
 
 Cite
 ----
