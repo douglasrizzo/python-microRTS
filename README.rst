@@ -4,7 +4,7 @@ python-microRTS
 |PyPI version|
 
 A python client library for
-`MicroRTS <https://github.com/santiontanon/microrts>`__.
+`microRTS <https://github.com/santiontanon/microrts>`__.
 
 This project is a fork of the `original python-microRTS <https://github.com/Bam4d/python-microRTS>`__, by Chris Bramford. As per the Apache License 2.0, a copy of the license is kept in the project and changes in the code (which are still minor) are documented in the `commit history <https://github.com/douglasrizzo/python-microRTS>`__ of the project.
 
@@ -109,14 +109,14 @@ like this:
    DEBUG:RTSServer:Socket bind complete
    DEBUG:RTSServer:Socket now listening
 
-Once you see this logging, you can start a `MicroRTS
+Once you see this logging, you can start a `microRTS
 environment <https://github.com/santiontanon/microrts>`__ and it should
 connect to the control server.
 
-Start MicroRTS in Client Mode
+Start microRTS in Client Mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Since your controller is going to have the role of a server, MicroRTS
+Since your controller is going to have the role of a server, microRTS
 must be started in Client Mode. In order to do that, change the contents
 of
 `config.properties <https://github.com/santiontanon/microrts/blob/master/resources/config.properties>`__
@@ -129,7 +129,7 @@ are kept as default:
    server_port=9898
    serialization_type=2
 
-Start MicroRTS. By now, you should see your Python agent interact with
+Start microRTS. By now, you should see your Python agent interact with
 the game.
 
 Cite
