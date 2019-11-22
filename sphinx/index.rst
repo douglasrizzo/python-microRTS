@@ -7,6 +7,7 @@
    :maxdepth: 2
    :caption: Contents:
 
+   usage.rst
    api.rst
    messages.rst
 

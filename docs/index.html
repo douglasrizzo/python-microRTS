@@ -17,33 +17,35 @@
   
 
   
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
 
-  
-  
     
 
   
-
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="The server module" href="server.html" /> 
-
-  
-  <script src="_static/js/modernizr.min.js"></script>
-
+    <link rel="next" title="Usage" href="usage.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
 
    
   <div class="wy-grid-for-nav">
-
     
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
-        <div class="wy-side-nav-search">
+        <div class="wy-side-nav-search" >
           
 
           
@@ -79,7 +81,9 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="server.html">The server module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="messages.html">Message examples</a></li>
 </ul>
 
             
@@ -147,16 +151,29 @@
   <div class="toctree-wrapper compound">
 <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="server.html">The server module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#create-a-controller">Create a controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#run-your-controller">Run your controller</a></li>
+<li class="toctree-l2"><a class="reference internal" href="usage.html#start-microrts-in-client-mode">Start microRTS in Client Mode</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="messages.html">Message examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="messages.html#unit-type-table">Unit type table</a></li>
+<li class="toctree-l2"><a class="reference internal" href="messages.html#state">State</a></li>
+<li class="toctree-l2"><a class="reference internal" href="messages.html#action">Action</a></li>
+</ul>
+</li>
 </ul>
 </div>
 <div class="section" id="python-microrts">
 <h1>python-microRTS<a class="headerlink" href="#python-microrts" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference external" href="https://badge.fury.io/py/python-microRTS"><img alt="PyPI version" src="https://badge.fury.io/py/python-microRTS.svg" /></a></p>
 <p>A python client library for
-<a class="reference external" href="https://github.com/santiontanon/microrts">MicroRTS</a>.</p>
+<a class="reference external" href="https://github.com/santiontanon/microrts">microRTS</a>.</p>
 <p>This project is a fork of the <a class="reference external" href="https://github.com/Bam4d/python-microRTS">original python-microRTS</a>, by Chris Bramford. As per the Apache License 2.0, a copy of the license is kept in the project and changes in the code (which are still minor) are documented in the <a class="reference external" href="https://github.com/douglasrizzo/python-microRTS">commit history</a> of the project.</p>
-<p>If you’re on GitHub, you can view the project documentation <a class="reference external" href="https://douglasrizzo.com.br/python-microRTS">here</a>.</p>
+<p>If you’re on GitHub and want to see <strong>usage examples, API documentation and message descriptions</strong>,
+access the project documentation <a class="reference external" href="https://douglasrizzo.com.br/python-microRTS">here</a>.</p>
 <div class="section" id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
 <div class="code shell highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">python</span><span class="o">-</span><span class="n">microRTS</span>
@@ -165,104 +182,17 @@
 </div>
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The python client library makes use of the <code class="docutils literal notranslate"><span class="pre">SocketAI</span></code> interface in the
-MicroRTS library.</p>
-<p>By default the socketAI library will connect to <code class="docutils literal notranslate"><span class="pre">localhost:9898</span></code>. The
+<p>By running microRTS in client mode, it will allow an external process to
+send actions to agents via a socket interface, as well as update the
+external process with the current state of the game. python-microRTS makes
+use of this feature, more specifically the <code class="docutils literal notranslate"><span class="pre">SocketAI</span></code> interface in the
+microRTS library.</p>
+<p>By default the SocketAI library will connect to <code class="docutils literal notranslate"><span class="pre">localhost:9898</span></code>. The
 python client is hard-coded to use these values also.</p>
-</div>
-<div class="section" id="usage">
-<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="create-a-controller">
-<h3>Create a controller<a class="headerlink" href="#create-a-controller" title="Permalink to this headline">¶</a></h3>
-<p>Create a class that inherits from the <code class="docutils literal notranslate"><span class="pre">pyrts.server.Server</span></code> class, in
-<code class="docutils literal notranslate"><span class="pre">server.py</span></code>, pass the ID of the player (0 or 1) and implement the
-<code class="docutils literal notranslate"><span class="pre">get_action()</span></code> method. It is also a good idea to instantiate your
-controller and call the <code class="docutils literal notranslate"><span class="pre">start()</span></code> method in the main function of your
-module, so that you can run this controller as a standalone script later.</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrts.server</span> <span class="k">import</span> <span class="n">Server</span>
-
-<span class="k">class</span> <span class="nc">AI</span><span class="p">(</span><span class="n">server</span><span class="p">):</span>
-
-     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_id</span><span class="p">):</span>
-         <span class="nb">super</span><span class="p">(</span><span class="n">AI</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">player_id</span><span class="p">)</span>
-
-     <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
-         <span class="c1"># In here implement the algorithm that takes the state and creates the action</span>
-         <span class="k">return</span> <span class="p">[</span> <span class="o">..</span>  <span class="nb">list</span> <span class="n">of</span> <span class="n">actions</span><span class="p">]</span>
-
- <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
-     <span class="n">ai</span> <span class="o">=</span> <span class="n">AI</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-     <span class="n">ai</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>The method must return a list of actions. Each action is a dict composed
-of a unit ID and the action it should execute. If the action has
-parameters, they should be passed too. Here is an example of a list of
-actions:</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
-    <span class="p">{</span>
-        <span class="s2">&quot;unitID&quot;</span><span class="p">:</span> <span class="mi">0</span> <span class="c1"># the unit that you wish to control</span>
-        <span class="s2">&quot;unitAction&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="mi">1</span> <span class="c1"># the type of action (this is defined in the unit type table)</span>
-            <span class="s1">&#39;parameters&#39;</span><span class="p">:</span> <span class="mi">0</span> <span class="c1"># the parameters for the action (this is defined in the unit type table)</span>
-        <span class="p">}</span>
-    <span class="p">},</span>
-    <span class="p">{</span>
-        <span class="c1"># more actions for different unit IDs</span>
-    <span class="p">}</span>
-<span class="p">]</span>
-</pre></div>
-</div>
-<p>For every game tick, the <code class="docutils literal notranslate"><span class="pre">get_action()</span></code> method is called. A list of
-actions is available in <code class="docutils literal notranslate"><span class="pre">pyrts.Action</span></code>. A list of directions (the only
-argument taken by some of the actions) is available in
-<code class="docutils literal notranslate"><span class="pre">pyrts.Direction</span></code>.</p>
-<p>If there are no actions to send at a given time step, then an empty list
-<code class="docutils literal notranslate"><span class="pre">[]</span></code> should be sent. If actions are sent to a subset of the units, the
-other units must receive <code class="docutils literal notranslate"><span class="pre">Action.NONE</span></code>. Units that are still
-performing actions from previous turns must also receive <code class="docutils literal notranslate"><span class="pre">Action.NONE</span></code>
-(a list of these units is returned by the <code class="docutils literal notranslate"><span class="pre">get_busy_units()</span></code> method
-inherited by your controller).</p>
-<div class="section" id="examples">
-<h4>Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h4>
-<p>Example controllers can be found in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> directory.
-Currently the following algorithms are implemented:</p>
-<ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">random_actions.py</span></code>: perform random actions for all units</li>
-<li><code class="docutils literal notranslate"><span class="pre">random_bot_movement.py</span></code>: a random walk for the single worker that
-starts</li>
-</ul>
-</div>
-</div>
-<div class="section" id="run-your-controller">
-<h3>Run your controller<a class="headerlink" href="#run-your-controller" title="Permalink to this headline">¶</a></h3>
-<p>Start your AI class in Python. You should see some logging that looks
-like this:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">DEBUG</span><span class="p">:</span><span class="n">RTSServer</span><span class="p">:</span><span class="n">Socket</span> <span class="n">created</span>
-<span class="n">DEBUG</span><span class="p">:</span><span class="n">RTSServer</span><span class="p">:</span><span class="n">Socket</span> <span class="n">bind</span> <span class="n">complete</span>
-<span class="n">DEBUG</span><span class="p">:</span><span class="n">RTSServer</span><span class="p">:</span><span class="n">Socket</span> <span class="n">now</span> <span class="n">listening</span>
-</pre></div>
-</div>
-<p>Once you see this logging, you can start a <a class="reference external" href="https://github.com/santiontanon/microrts">MicroRTS
-environment</a> and it should
-connect to the control server.</p>
-</div>
-<div class="section" id="start-microrts-in-client-mode">
-<h3>Start MicroRTS in Client Mode<a class="headerlink" href="#start-microrts-in-client-mode" title="Permalink to this headline">¶</a></h3>
-<p>Since your controller is going to have the role of a server, MicroRTS
-must be started in Client Mode. In order to do that, change the contents
-of
-<a class="reference external" href="https://github.com/santiontanon/microrts/blob/master/resources/config.properties">config.properties</a>
-so that <code class="docutils literal notranslate"><span class="pre">launch_mode=CLIENT</span></code>. Make sure all other network parameters
-are kept as default:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">server_address</span><span class="o">=</span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
-<span class="n">server_port</span><span class="o">=</span><span class="mi">9898</span>
-<span class="n">serialization_type</span><span class="o">=</span><span class="mi">2</span>
-</pre></div>
-</div>
-<p>Start MicroRTS. By now, you should see your Python agent interact with
-the game.</p>
-</div>
+<p><a class="reference internal" href="messages.html#state"><span class="std std-ref">States</span></a> are received as JSON strings, which are converted
+to Python <code class="docutils literal notranslate"><span class="pre">dict</span></code> objects. An <a class="reference internal" href="messages.html#action"><span class="std std-ref">action</span></a> is created as a
+Python <code class="docutils literal notranslate"><span class="pre">list</span></code> of <code class="docutils literal notranslate"><span class="pre">dict</span></code> s, which is converted to a JSON string for
+socket communication.</p>
 </div>
 <div class="section" id="cite">
 <h2>Cite<a class="headerlink" href="#cite" title="Permalink to this headline">¶</a></h2>
@@ -287,7 +217,7 @@ the game.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="server.html" class="btn btn-neutral float-right" title="The server module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="usage.html" class="btn btn-neutral float-right" title="Usage" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -314,26 +244,16 @@ the game.</p>
   
 
 
-  
-
-    
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-
-  
-
-  <script type="text/javascript" src="_static/js/theme.js"></script>
-
   <script type="text/javascript">
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>
+
+  
+  
+    
+   
 
 </body>
 </html>

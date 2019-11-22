@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>API documentation &mdash; python-microRTS 0.0.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Message examples" href="messages.html" />
+    <link rel="prev" title="Usage" href="usage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> python-microRTS
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="messages.html">Message examples</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">python-microRTS</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>API documentation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pyrts.server">
+<span id="api-documentation"></span><h1>API documentation<a class="headerlink" href="#module-pyrts.server" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="pyrts.server.Action">
+<em class="property">class </em><code class="descclassname">pyrts.server.</code><code class="descname">Action</code><a class="reference internal" href="_modules/pyrts/server.html#Action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing the actions accepted by MicroRTS. Variable names indicate their meaning and integer values are used in the JSON serialization.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pyrts.server.Direction">
+<em class="property">class </em><code class="descclassname">pyrts.server.</code><code class="descname">Direction</code><a class="reference internal" href="_modules/pyrts/server.html#Direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Direction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class containing directions, as accepted by MicroRTS in their action parameters. Variable names indicate their meaning and integer values are used in the JSON serialization.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pyrts.server.Server">
+<em class="property">class </em><code class="descclassname">pyrts.server.</code><code class="descname">Server</code><span class="sig-paren">(</span><em>player_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agentes who which to interact with MicroRTS.</p>
+<dl class="method">
+<dt id="pyrts.server.Server.get_action">
+<code class="descname">get_action</code><span class="sig-paren">(</span><em>state</em>, <em>gameover</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a list of actions to MicroRTS, given a state. Override this in
+the super class.</p>
+<p>Be aware that, if <cite>gameover = True</cite>, the action provided will not be
+processed by MicroRTS.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_available_actions_by_type_name">
+<code class="descname">get_available_actions_by_type_name</code><span class="sig-paren">(</span><em>unit_type_table</em>, <em>type_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_available_actions_by_type_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_available_actions_by_type_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given the unit type and the unit type table, return a complete list of the possible actions that unit can perform</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_busy_units">
+<code class="descname">get_busy_units</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_busy_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_busy_units" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a list of the units that are currently busy performing an action</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> – [description]</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">[description]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_grid_from_state">
+<code class="descname">get_grid_from_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_grid_from_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_grid_from_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the width and height of the environment</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_resource_usage_from_actions">
+<code class="descname">get_resource_usage_from_actions</code><span class="sig-paren">(</span><em>actions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resource_usage_from_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resource_usage_from_actions" title="Permalink to this definition">¶</a></dt>
+<dd><p>From a list of actions, sum the cost of the actions</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_resource_usage_from_state">
+<code class="descname">get_resource_usage_from_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resource_usage_from_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resource_usage_from_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>How many resources are currently being used to build units</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_resources_for_player">
+<code class="descname">get_resources_for_player</code><span class="sig-paren">(</span><em>state</em>, <em>for_player=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resources_for_player"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resources_for_player" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the number of resources the player currently has available</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_unit_type_table">
+<code class="descname">get_unit_type_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_unit_type_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_unit_type_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the unit type table, which describes the environment</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">[description]</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_valid_action_positions_for_state">
+<code class="descname">get_valid_action_positions_for_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_valid_action_positions_for_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_valid_action_positions_for_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a tuple containing the following:
+invalid_move_positions - a set of all the positions that cannot be moved into
+valid_harvest_positions -  a set of all the resource locations
+valid_base_positions - a set of the positions of bases on the current players team
+valid_attack_positions - a set of the positions that can be attacked</p>
+<p>These positions can be cross-referenced with possible actions that units can perform, to make sure no invalid actions are sent to the environment</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.get_valid_actions_for_unit">
+<code class="descname">get_valid_actions_for_unit</code><span class="sig-paren">(</span><em>unit</em>, <em>available_actions</em>, <em>valid_positions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_valid_actions_for_unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_valid_actions_for_unit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the actions that are valid for a unit to perform.</p>
+<p>An action is INVALID if the action cannot be performed in the environment.</p>
+<p>For example, if the action is MOVE(left) but the position to the left of the unit is blocked</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="messages.html" class="btn btn-neutral float-right" title="Message examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="usage.html" class="btn btn-neutral float-left" title="Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Chris Bamford
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
