@@ -17,7 +17,10 @@ class Action:
 
     @staticmethod
     def as_list():
-        return [Action.NONE, Action.MOVE, Action.HARVEST, Action.RETURN, Action.PRODUCE, Action.ATTACK]
+        return [
+            Action.NONE, Action.MOVE, Action.HARVEST, Action.RETURN,
+            Action.PRODUCE, Action.ATTACK
+        ]
 
 
 class Direction:
@@ -76,7 +79,9 @@ class Server(object):
         :return: A filtered list of all the actions that can be applied
         """
         busy_units = self.get_busy_units(state)
-        return [action for action in actions if action['unitID'] not in busy_units]
+        return [
+            action for action in actions if action['unitID'] not in busy_units
+        ]
 
     @abstractmethod
     def get_action(self, state, gameover):
@@ -169,28 +174,19 @@ class Server(object):
         return set([(unit['x'], unit['y']) for unit in state['pgs']['units']])
 
     def _get_valid_harvest_positions(self, state):
-        return set(
-            [
-                (unit['x'], unit['y']) for unit in state['pgs']['units']
-                if unit['type'] == "Resource"
-            ]
-        )
+        return set([(unit['x'], unit['y']) for unit in state['pgs']['units']
+                    if unit['type'] == "Resource"])
 
     def _get_valid_base_positions(self, state):
         return set(
-            [
-                (unit['x'], unit['y']) for unit in state['pgs']['units']
-                if unit['type'] == "Base" and unit['player'] == self.player_id
-            ]
-        )
+            [(unit['x'], unit['y']) for unit in state['pgs']['units']
+             if unit['type'] == "Base" and unit['player'] == self.player_id])
 
     def _get_valid_attack_positions(self, state):
-        return set(
-            [
-                (unit['x'], unit['y']) for unit in state['pgs']['units']
-                if unit['type'] != "Resource" and unit['player'] != self.player_id
-            ]
-        )
+        return set([
+            (unit['x'], unit['y']) for unit in state['pgs']['units']
+            if unit['type'] != "Resource" and unit['player'] != self.player_id
+        ])
 
     def get_valid_action_positions_for_state(self, state):
         """
@@ -203,12 +199,13 @@ class Server(object):
         These positions can be cross-referenced with possible actions that units can perform, to make sure no invalid actions are sent to the environment
         """
 
-        return (
-            self._get_invalid_move_positions(state), self._get_valid_harvest_positions(state),
-            self._get_valid_base_positions(state), self._get_valid_attack_positions(state)
-        )
+        return (self._get_invalid_move_positions(state),
+                self._get_valid_harvest_positions(state),
+                self._get_valid_base_positions(state),
+                self._get_valid_attack_positions(state))
 
-    def get_valid_actions_for_unit(self, unit, available_actions, valid_positions):
+    def get_valid_actions_for_unit(self, unit, available_actions,
+                                   valid_positions):
         """
         Get the actions that are valid for a unit to perform.
 
@@ -217,42 +214,47 @@ class Server(object):
         For example, if the action is MOVE(left) but the position to the left of the unit is blocked
         """
 
-        (
-            invalid_move_positions, valid_harvest_positions, valid_base_positions,
-            valid_attack_positions
-        ) = valid_positions
+        (invalid_move_positions, valid_harvest_positions, valid_base_positions,
+         valid_attack_positions) = valid_positions
 
         valid_actions = []
 
-        self._logger.info('unit [%s] position [%d, %d]' % (unit['type'], unit['x'], unit['y']))
+        self._logger.info('unit [%s] position [%d, %d]' %
+                          (unit['type'], unit['x'], unit['y']))
 
         # For all the actions make sure that those actions are possible
         for action in available_actions:
             position = self.get_action_position(action, unit)
             if action['type'] == Action.MOVE:
-                if self._is_on_grid(position) and position not in invalid_move_positions:
+                if self._is_on_grid(
+                        position) and position not in invalid_move_positions:
                     valid_actions.append(action)
 
             if action['type'] == Action.HARVEST:
-                if self._is_on_grid(position) and position in valid_harvest_positions:
+                if self._is_on_grid(
+                        position) and position in valid_harvest_positions:
                     valid_actions.append(action)
 
             if action['type'] == Action.RETURN:
-                if self._is_on_grid(position) and position in valid_base_positions:
+                if self._is_on_grid(
+                        position) and position in valid_base_positions:
                     valid_actions.append(action)
 
             if action['type'] == Action.ATTACK:
-                if self._is_on_grid(position) and position in valid_attack_positions:
+                if self._is_on_grid(
+                        position) and position in valid_attack_positions:
                     action['x'] = position[0]
                     action['y'] = position[1]
                     valid_actions.append(action)
 
             if action['type'] == Action.PRODUCE:
                 # Unavailable produce positions are the same as unavailable move positions
-                if self._is_on_grid(position) and position not in invalid_move_positions:
+                if self._is_on_grid(
+                        position) and position not in invalid_move_positions:
                     valid_actions.append(action)
 
-        self._logger.info('valid actions for unit [%s]: %s' % (unit['type'], valid_actions))
+        self._logger.info(
+            'valid actions for unit [%s]: %s' % (unit['type'], valid_actions))
         return valid_actions
 
     def get_action_position(self, action, unit):
@@ -276,61 +278,52 @@ class Server(object):
         available_actions = []
 
         # Get unit type by type name
-        unit_type = [unit for unit in unit_type_table['unitTypes'] if unit['name'] == type_name][0]
+        unit_type = [
+            unit for unit in unit_type_table['unitTypes']
+            if unit['name'] == type_name
+        ][0]
 
         # canMove
         if unit_type['canMove']:
-            available_actions.extend(self._get_directional_actions(Action.MOVE))
+            available_actions.extend(
+                self._get_directional_actions(Action.MOVE))
 
         # canAttack
         if unit_type['canAttack']:
             # This is more complicated because the params have x-y coordinates and a range
             if unit_type['attackRange'] == 1:
-                available_actions.extend(self._get_directional_actions(Action.ATTACK))
+                available_actions.extend(
+                    self._get_directional_actions(Action.ATTACK))
 
         # canHarvest
         if unit_type['canHarvest']:
-            available_actions.extend(self._get_directional_actions(Action.HARVEST))
-            available_actions.extend(self._get_directional_actions(Action.RETURN))
+            available_actions.extend(
+                self._get_directional_actions(Action.HARVEST))
+            available_actions.extend(
+                self._get_directional_actions(Action.RETURN))
 
         # If this unit can produce anything
         if len(unit_type['produces']) > 0:
-            available_actions.extend(
-                [
-                    {
-                        'type': Action.PRODUCE,
-                        'unitType': unit_type_name,
-                        'parameter': Direction.UP
-                    } for unit_type_name in unit_type['produces']
-                ]
-            )
-            available_actions.extend(
-                [
-                    {
-                        'type': Action.PRODUCE,
-                        'unitType': unit_type_name,
-                        'parameter': Direction.RIGHT
-                    } for unit_type_name in unit_type['produces']
-                ]
-            )
-            available_actions.extend(
-                [
-                    {
-                        'type': Action.PRODUCE,
-                        'unitType': unit_type_name,
-                        'parameter': Direction.DOWN
-                    } for unit_type_name in unit_type['produces']
-                ]
-            )
-            available_actions.extend(
-                [
-                    {
-                        'type': Action.PRODUCE,
-                        'unitType': unit_type_name,
-                        'parameter': Direction.LEFT
-                    } for unit_type_name in unit_type['produces']
-                ]
-            )
+            available_actions.extend([{
+                'type': Action.PRODUCE,
+                'unitType': unit_type_name,
+                'parameter': Direction.UP
+            } for unit_type_name in unit_type['produces']])
+            available_actions.extend([{
+                'type': Action.PRODUCE,
+                'unitType': unit_type_name,
+                'parameter': Direction.RIGHT
+            } for unit_type_name in unit_type['produces']])
+            available_actions.extend([{
+                'type': Action.PRODUCE,
+                'unitType': unit_type_name,
+                'parameter': Direction.DOWN
+            } for unit_type_name in unit_type['produces']])
+            available_actions.extend([{
+                'type': Action.PRODUCE,
+                'unitType': unit_type_name,
+                'parameter': Direction.LEFT
+            } for unit_type_name in unit_type['produces']])
 
         return available_actions
 
@@ -362,7 +355,6 @@ class Server(object):
         """
         How many resources are currently being used to build units
         """
-
         used_resources = 0
         unit_types = self._unit_type_table['unitTypes']
         for action in state['actions']:
@@ -397,7 +389,8 @@ class Server(object):
         try:
             self._s.bind(('localhost', 9898))
         except socket.error as msg:
-            self._logger.debug('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
+            self._logger.debug('Bind failed. Error Code : ' + str(msg[0]) +
+                               ' Message ' + msg[1])
             self._s.close()
             sys.exit()
 
