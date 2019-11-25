@@ -417,7 +417,7 @@ class Server(object):
         while not gameover:
             # _process_message() automatically gets the headers and processes actions
             command, action = self._process_message()
-            if command[0] in ['getAction', 'gameOver']:
+            if command in ['getAction', 'gameOver']:
                 if action is not None:
                     self._logger.debug('Sending action %s' % action)
                     self._send(action)
