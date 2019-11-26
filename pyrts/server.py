@@ -40,10 +40,10 @@ class Server(object):
     """Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agentes who which to interact with MicroRTS.
     """
 
-    def __init__(self, player_id):
+    def __init__(self, player_id, logging_level=logging.CRITICAL):
         logging.basicConfig()
         self._logger = logging.getLogger('RTSServer')
-        self._logger.setLevel(logging.DEBUG)
+        self._logger.setLevel(logging_level)
 
         self.player_id = player_id
         self._max_x = None
@@ -152,7 +152,7 @@ class Server(object):
                 state = json.loads(message_parts[1])
                 self._logger.debug('state: %s' % state)
             except json.decoder.JSONDecodeError as e:
-                self._logger.fatal(
+                self._logger.critical(
                     'The message size has gotten larger what is recovered by the socket.'
                 )
                 raise e
