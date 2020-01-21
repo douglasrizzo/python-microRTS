@@ -2,6 +2,9 @@ import json
 import logging
 import socket
 import sys
+import os
+import subprocess
+
 from abc import abstractmethod
 
 
@@ -386,8 +389,15 @@ class Server(object):
 
         return used_resources
 
-    def start(self):
-        self._logger.debug('Socket created')
+    def start(self, start_microrts=False, microrts_properties=None):
+        """Start the MicroRTS server.
+        
+        :param start_microrts: whether to also start a MicroRTS instance along with the server. Be aware that, in order to spawn a java subprocess that will start MicroRTS, the MICRORTSPATH environment variable must be set, containing the path to the directory with the necessary libraries to start MicroRTS, as well as MicroRTS class files. Defaults to False
+        :type start_microrts: bool, optional
+        :param microrts_properties: path to a properties file, which will be read by MicroRTS -f flag, defaults to None
+        :type microrts_properties: str, optional
+        """
+        self._logger.info('Socket created')
 
         # Bind socket to local host and port
         try:
@@ -402,6 +412,20 @@ class Server(object):
         # Start listening on socket
         self._s.listen(10)
         self._logger.info('Socket now listening')
+
+        if start_microrts:
+            self._logger.info('Starting MicroRTS')
+
+            classpath = '{}:{}'.format(
+                os.path.join(os.environ['MICRORTSPATH'], "lib/*"),
+                os.path.join(os.environ['MICRORTSPATH'], "bin")
+            )
+
+            self._logger.info('Generated classpath: ' + classpath)
+
+            subprocess.Popen(['java', '-cp', classpath, 'rts.MicroRTS', '-f', microrts_properties])
+
+            self._logger.info('MicroRTS started')
 
         # now keep talking with the client
         self._connection, addr = self._s.accept()
