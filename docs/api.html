@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>API documentation &mdash; python-microRTS 0.0.3 documentation</title>
+  <title>API documentation &mdash; python-microRTS 0.0.4 documentation</title>
   
 
   
@@ -153,26 +153,26 @@
 <span id="api-documentation"></span><h1>API documentation<a class="headerlink" href="#module-pyrts.server" title="Permalink to this headline">¶</a></h1>
 <dl class="class">
 <dt id="pyrts.server.Action">
-<em class="property">class </em><code class="descclassname">pyrts.server.</code><code class="descname">Action</code><a class="reference internal" href="_modules/pyrts/server.html#Action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Action" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyrts.server.</code><code class="sig-name descname">Action</code><a class="reference internal" href="_modules/pyrts/server.html#Action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class containing the actions accepted by MicroRTS. Variable names indicate their meaning and integer values are used in the JSON serialization.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyrts.server.Direction">
-<em class="property">class </em><code class="descclassname">pyrts.server.</code><code class="descname">Direction</code><a class="reference internal" href="_modules/pyrts/server.html#Direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Direction" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyrts.server.</code><code class="sig-name descname">Direction</code><a class="reference internal" href="_modules/pyrts/server.html#Direction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Direction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Class containing directions, as accepted by MicroRTS in their action parameters. Variable names indicate their meaning and integer values are used in the JSON serialization.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="pyrts.server.Server">
-<em class="property">class </em><code class="descclassname">pyrts.server.</code><code class="descname">Server</code><span class="sig-paren">(</span><em>player_id</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyrts.server.</code><code class="sig-name descname">Server</code><span class="sig-paren">(</span><em class="sig-param">player_id</em>, <em class="sig-param">logging_level=50</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agentes who which to interact with MicroRTS.</p>
+<p>Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agents who which to interact with MicroRTS.</p>
 <dl class="method">
 <dt id="pyrts.server.Server.get_action">
-<code class="descname">get_action</code><span class="sig-paren">(</span><em>state</em>, <em>gameover</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_action" title="Permalink to this definition">¶</a></dt>
+<em class="property">abstract </em><code class="sig-name descname">get_action</code><span class="sig-paren">(</span><em class="sig-param">state</em>, <em class="sig-param">gameover</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Send a list of actions to MicroRTS, given a state. Override this in
 the super class.</p>
 <p>Be aware that, if <cite>gameover = True</cite>, the action provided will not be
@@ -181,67 +181,56 @@ processed by MicroRTS.</p>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_available_actions_by_type_name">
-<code class="descname">get_available_actions_by_type_name</code><span class="sig-paren">(</span><em>unit_type_table</em>, <em>type_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_available_actions_by_type_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_available_actions_by_type_name" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_available_actions_by_type_name</code><span class="sig-paren">(</span><em class="sig-param">unit_type_table</em>, <em class="sig-param">type_name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_available_actions_by_type_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_available_actions_by_type_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Given the unit type and the unit type table, return a complete list of the possible actions that unit can perform</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_busy_units">
-<code class="descname">get_busy_units</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_busy_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_busy_units" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_busy_units</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_busy_units"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_busy_units" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a list of the units that are currently busy performing an action</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>state</strong> – [description]</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">[description]</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyrts.server.Server.get_grid_from_state">
-<code class="descname">get_grid_from_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_grid_from_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_grid_from_state" title="Permalink to this definition">¶</a></dt>
-<dd><p>Gets the width and height of the environment</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>state</strong> – [description]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>[description]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_resource_usage_from_actions">
-<code class="descname">get_resource_usage_from_actions</code><span class="sig-paren">(</span><em>actions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resource_usage_from_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resource_usage_from_actions" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_resource_usage_from_actions</code><span class="sig-paren">(</span><em class="sig-param">actions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resource_usage_from_actions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resource_usage_from_actions" title="Permalink to this definition">¶</a></dt>
 <dd><p>From a list of actions, sum the cost of the actions</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_resource_usage_from_state">
-<code class="descname">get_resource_usage_from_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resource_usage_from_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resource_usage_from_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_resource_usage_from_state</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resource_usage_from_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resource_usage_from_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>How many resources are currently being used to build units</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_resources_for_player">
-<code class="descname">get_resources_for_player</code><span class="sig-paren">(</span><em>state</em>, <em>for_player=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resources_for_player"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resources_for_player" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_resources_for_player</code><span class="sig-paren">(</span><em class="sig-param">state</em>, <em class="sig-param">for_player=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_resources_for_player"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_resources_for_player" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of resources the player currently has available</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_unit_type_table">
-<code class="descname">get_unit_type_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_unit_type_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_unit_type_table" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_unit_type_table</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_unit_type_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_unit_type_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the unit type table, which describes the environment</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">[description]</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>[description]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_valid_action_positions_for_state">
-<code class="descname">get_valid_action_positions_for_state</code><span class="sig-paren">(</span><em>state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_valid_action_positions_for_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_valid_action_positions_for_state" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_valid_action_positions_for_state</code><span class="sig-paren">(</span><em class="sig-param">state</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_valid_action_positions_for_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_valid_action_positions_for_state" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns a tuple containing the following:
 invalid_move_positions - a set of all the positions that cannot be moved into
 valid_harvest_positions -  a set of all the resource locations
@@ -252,10 +241,24 @@ valid_attack_positions - a set of the positions that can be attacked</p>
 
 <dl class="method">
 <dt id="pyrts.server.Server.get_valid_actions_for_unit">
-<code class="descname">get_valid_actions_for_unit</code><span class="sig-paren">(</span><em>unit</em>, <em>available_actions</em>, <em>valid_positions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_valid_actions_for_unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_valid_actions_for_unit" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_valid_actions_for_unit</code><span class="sig-paren">(</span><em class="sig-param">unit</em>, <em class="sig-param">available_actions</em>, <em class="sig-param">valid_positions</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.get_valid_actions_for_unit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.get_valid_actions_for_unit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the actions that are valid for a unit to perform.</p>
 <p>An action is INVALID if the action cannot be performed in the environment.</p>
 <p>For example, if the action is MOVE(left) but the position to the left of the unit is blocked</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyrts.server.Server.start">
+<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param">start_microrts=False</em>, <em class="sig-param">microrts_properties=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyrts/server.html#Server.start"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyrts.server.Server.start" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the MicroRTS server.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start_microrts</strong> (<em>bool</em><em>, </em><em>optional</em>) – whether to also start a MicroRTS instance along with the server. Be aware that, in order to spawn a java subprocess that will start MicroRTS, the MICRORTSPATH environment variable must be set, containing the path to the directory with the necessary libraries to start MicroRTS, as well as MicroRTS class files. Defaults to False</p></li>
+<li><p><strong>microrts_properties</strong> (<em>str</em><em>, </em><em>optional</em>) – path to a properties file, which will be read by MicroRTS -f flag, defaults to None</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

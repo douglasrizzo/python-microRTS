@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Message examples &mdash; python-microRTS 0.0.3 documentation</title>
+  <title>Message examples &mdash; python-microRTS 0.0.4 documentation</title>
   
 
   
@@ -159,7 +159,8 @@
 <h2>Unit type table<a class="headerlink" href="#unit-type-table" title="Permalink to this headline">¶</a></h2>
 <p>According to the microRTS documentation:</p>
 <blockquote>
-<div>The unit type table stores the unit types the game can have. It also determines the attributes of each unit type. The unit type table determines the balance of the game.</div></blockquote>
+<div><p>The unit type table stores the unit types the game can have. It also determines the attributes of each unit type. The unit type table determines the balance of the game.</p>
+</div></blockquote>
 <p>Below is an example of a unit type table message in JSON format, which is sent to the Python controller at the beginning of a game. This message starts with the <code class="docutils literal notranslate"><span class="pre">utt</span></code> identifier.</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
   <span class="nt">&quot;moveConflictResolutionStrategy&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
@@ -453,7 +454,7 @@
 <div class="section" id="action">
 <h2>Action<a class="headerlink" href="#action" title="Permalink to this headline">¶</a></h2>
 <p>Every time the <a class="reference internal" href="api.html#pyrts.server.Server.get_action" title="pyrts.server.Server.get_action"><code class="xref py py-func docutils literal notranslate"><span class="pre">pyrts.server.Server.get_action()</span></code></a> method of the user-created controller is called, a list of actions must be returned, one action for each unit in the game. The list is a standard Python list and each action is a Python <code class="docutils literal notranslate"><span class="pre">dict</span></code> objects containing the unit ID and another <code class="docutils literal notranslate"><span class="pre">dict</span></code> containing the action and its parameters. Action names and codes are listed in <a class="reference internal" href="api.html#pyrts.server.Action" title="pyrts.server.Action"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrts.server.Action</span></code></a>. Action parameters, which are mostly directions to apply the actions, are listed in <a class="reference internal" href="api.html#pyrts.server.Direction" title="pyrts.server.Direction"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrts.server.Direction</span></code></a>.</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
     <span class="p">{</span>
         <span class="s2">&quot;unitID&quot;</span><span class="p">:</span> <span class="mi">0</span> <span class="c1"># the unit that you wish to control</span>
         <span class="s2">&quot;unitAction&quot;</span><span class="p">:</span> <span class="p">{</span>

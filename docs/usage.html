@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; python-microRTS 0.0.3 documentation</title>
+  <title>Usage &mdash; python-microRTS 0.0.4 documentation</title>
   
 
   
@@ -88,7 +88,10 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#run-your-controller">Run your controller</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#start-microrts-in-client-mode">Start microRTS in Client Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#start-microrts-in-client-mode">Start microRTS in Client Mode</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#starting-microrts-automatically-experimental">Starting MicroRTS automatically (experimental)</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API documentation</a></li>
@@ -165,13 +168,13 @@
 in, pass the ID of the player (0 or 1) and implement the
 <a class="reference internal" href="api.html#pyrts.server.Server.get_action" title="pyrts.server.Server.get_action"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_action()</span></code></a> method. It is also
 a good idea to instantiate your controller and call the
-<code class="xref py py-func docutils literal notranslate"><span class="pre">start()</span></code> method in the main function of
+<a class="reference internal" href="api.html#pyrts.server.Server.start" title="pyrts.server.Server.start"><code class="xref py py-func docutils literal notranslate"><span class="pre">start()</span></code></a> method in the main function of
 your module, so that you can run this controller as a standalone script later.</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrts.server</span> <span class="k">import</span> <span class="n">Server</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyrts.server</span> <span class="kn">import</span> <span class="n">Server</span>
 
 <span class="k">class</span> <span class="nc">AI</span><span class="p">(</span><span class="n">server</span><span class="p">):</span>
 
-     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_id</span><span class="p">):</span>
+     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_id</span><span class="p">):</span>
          <span class="nb">super</span><span class="p">(</span><span class="n">AI</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">player_id</span><span class="p">)</span>
 
      <span class="k">def</span> <span class="nf">get_action</span><span class="p">(</span><span class="n">state</span><span class="p">):</span>
@@ -189,7 +192,7 @@ objects containing the unit ID and another <code class="docutils literal notrans
 its parameters. Action names and codes are listed in
 <a class="reference internal" href="api.html#pyrts.server.Action" title="pyrts.server.Action"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrts.server.Action</span></code></a>. Action parameters, which are mostly directions to
 apply the actions, are listed in <a class="reference internal" href="api.html#pyrts.server.Direction" title="pyrts.server.Direction"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyrts.server.Direction</span></code></a>.</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span>
     <span class="p">{</span>
         <span class="s2">&quot;unitID&quot;</span><span class="p">:</span> <span class="mi">0</span> <span class="c1"># the unit that you wish to control</span>
         <span class="s2">&quot;unitAction&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -218,9 +221,9 @@ inherited by your controller).</p>
 <p>Example controllers can be found in the <code class="docutils literal notranslate"><span class="pre">examples</span></code> directory.
 Currently the following algorithms are implemented:</p>
 <ul class="simple">
-<li><code class="docutils literal notranslate"><span class="pre">random_actions.py</span></code>: perform random actions for all units</li>
-<li><code class="docutils literal notranslate"><span class="pre">random_bot_movement.py</span></code>: a random walk for the single worker that
-starts</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">random_actions.py</span></code>: perform random actions for all units</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">random_bot_movement.py</span></code>: a random walk for the single worker that
+starts</p></li>
 </ul>
 </div>
 </div>
@@ -252,6 +255,27 @@ are kept as default:</p>
 </div>
 <p>Start microRTS. By now, you should see your Python agent interact with
 the game.</p>
+<div class="section" id="starting-microrts-automatically-experimental">
+<h3>Starting MicroRTS automatically (experimental)<a class="headerlink" href="#starting-microrts-automatically-experimental" title="Permalink to this headline">¶</a></h3>
+<p>MicroRTS can be started automatically by python-microRTS. This is useful
+in case you wish to run multiple games in a loop. In order to do that:</p>
+<ul class="simple">
+<li><p>the <code class="docutils literal notranslate"><span class="pre">MICRORTSPATH</span></code> environment variable must be set, containing the
+path to the directory that has the necessary libraries to run MicroRTS,
+as well as MicroRTS <code class="docutils literal notranslate"><span class="pre">.class</span></code> files.</p></li>
+<li><p>a properties file must be provided (like
+<a class="reference external" href="https://github.com/santiontanon/microrts/blob/master/resources/config.properties">this one</a>),
+containing the necessary information to start MicroRTS.</p></li>
+</ul>
+<p>Start your controller with the following parameters (edit them as necessary):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">ai</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">start_microrts</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">microrts_properties</span><span class="o">=</span><span class="s1">&#39;my_file.properties&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The following command in spawned using the <cite>subprocess</cite> package:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">java</span> <span class="o">-</span><span class="n">cp</span> <span class="s2">&quot;$</span><span class="si">{MICRORTSPATH}</span><span class="s2">/lib/*:$</span><span class="si">{MICRORTSPATH}</span><span class="s2">/bin&quot;</span> <span class="n">rts</span><span class="o">.</span><span class="n">MicroRTS</span> <span class="o">-</span><span class="n">f</span> <span class="o">&lt;</span><span class="n">microrts</span> <span class="n">properties</span> <span class="n">file</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
