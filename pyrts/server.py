@@ -37,8 +37,10 @@ class Direction:
 
 
 class Server(object):
-    """Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agentes who which to interact with MicroRTS.
+    """Python implementation of a MicroRTS server, which communicates with MicroRTS via a network socket by sending actions and receiving states in the JSON format. This class should be used as the base class for other agents who which to interact with MicroRTS.    
     """
+
+    MESSAGE_SIZE_BITS = 8192
 
     def __init__(self, player_id, logging_level=logging.CRITICAL):
         logging.basicConfig()
@@ -65,7 +67,7 @@ class Server(object):
         self._connection.send(('%s\n' % data_string).encode('utf-8'))
 
     def _wait_for_message(self):
-        environment_message = self._connection.recv(8192).decode('utf-8')
+        environment_message = self._connection.recv(Server.MESSAGE_SIZE_BITS).decode('utf-8')
         if environment_message[0] == u'\n':
             return 'ACK'
         self._logger.debug('Message: %s' % environment_message)
