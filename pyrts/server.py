@@ -153,17 +153,20 @@ class Server(object):
             self._ack()
 
         elif command[0] in ['getAction', 'gameOver']:
-            try:
-                state = json.loads(message_parts[1])
-                self._logger.debug('state: %s' % state)
-            except json.decoder.JSONDecodeError as e:
-                self._logger.critical(
-                    'The message size has gotten larger what is recovered by the socket.'
-                )
-                raise e
+            if command[0] == 'gameOver':
+                state = None
+            else:
+                try:
+                    state = json.loads(message_parts[1])
+                    self._logger.debug('state: %s' % state)
+                except json.decoder.JSONDecodeError as e:
+                    self._logger.critical(
+                        'The message size has gotten larger than what is recovered by the socket ({} bits).'
+                        .format(Server.MESSAGE_SIZE_BITS)
+                    )
+                    raise e
 
-            ret = self._process_state_and_get_action(state,
-                                                     command[0] == 'gameOver')
+            ret = self._process_state_and_get_action(state, command[0] == 'gameOver')
 
         else:
             ret = []
