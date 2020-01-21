@@ -231,8 +231,7 @@ class Server(object):
 
         valid_actions = []
 
-        self._logger.info('unit [%s] position [%d, %d]' %
-                          (unit['type'], unit['x'], unit['y']))
+        self._logger.debug('unit [%s] position [%d, %d]' % (unit['type'], unit['x'], unit['y']))
 
         # For all the actions make sure that those actions are possible
         for action in available_actions:
@@ -265,8 +264,7 @@ class Server(object):
                         position) and position not in invalid_move_positions:
                     valid_actions.append(action)
 
-        self._logger.info(
-            'valid actions for unit [%s]: %s' % (unit['type'], valid_actions))
+        self._logger.debug('valid actions for unit [%s]: %s' % (unit['type'], valid_actions))
         return valid_actions
 
     def get_action_position(self, action, unit):
@@ -395,24 +393,23 @@ class Server(object):
         try:
             self._s.bind(('localhost', 9898))
         except socket.error as msg:
-            self._logger.debug('Bind failed. Error Code : ' + str(msg[0]) +
-                               ' Message ' + msg[1])
+            self._logger.critical('Bind failed. Error Code : ' + str(msg[0]) + ' Message ' + msg[1])
             self._s.close()
             sys.exit()
 
-        self._logger.debug('Socket bind complete')
+        self._logger.info('Socket bind complete')
 
         # Start listening on socket
         self._s.listen(10)
-        self._logger.debug('Socket now listening')
+        self._logger.info('Socket now listening')
 
         # now keep talking with the client
         self._connection, addr = self._s.accept()
-        self._logger.debug(self._connection)
-        self._logger.debug(addr)
+        self._logger.info(self._connection)
+        self._logger.info(addr)
 
         self._ack()
-        self._logger.debug('Connected with ' + addr[0] + ':' + str(addr[1]))
+        self._logger.info('Connected with ' + addr[0] + ':' + str(addr[1]))
 
         gameover = False
 
@@ -424,7 +421,7 @@ class Server(object):
                     self._logger.debug('Sending action %s' % action)
                     self._send(action)
                 else:
-                    self._logger.debug('Game has ended')
+                    self._logger.info('Game has ended')
                     gameover = True
 
         self._s.close()
