@@ -392,13 +392,13 @@ class Server(object):
 
         return used_resources
 
-    def start(self, start_microrts=False, microrts_properties=None):
+    def start(self, start_microrts=False, properties_file=None):
         """Start the MicroRTS server.
         
-        :param start_microrts: whether to also start a MicroRTS instance along with the server. Be aware that, in order to spawn a java subprocess that will start MicroRTS, the MICRORTSPATH environment variable must be set, containing the path to the directory with the necessary libraries to start MicroRTS, as well as MicroRTS class files. Defaults to False
+        :param start_microrts: whether to also start a MicroRTS instance along with the server. Be aware that, in order to spawn a java subprocess that will start MicroRTS, the MICRORTSPATH environment variable must be set, containing the path to the microRTS executable JAR. Defaults to False
         :type start_microrts: bool, optional
-        :param microrts_properties: path to a properties file, which will be read by MicroRTS -f flag, defaults to None
-        :type microrts_properties: str, optional
+        :param properties_file: path to a properties file, which will be read by MicroRTS -f flag, defaults to None
+        :type properties_file: str, optional
         """
         self._logger.info('Socket created')
 
@@ -417,17 +417,8 @@ class Server(object):
         self._logger.info('Socket now listening')
 
         if start_microrts:
-            self._logger.info('Starting MicroRTS')
-
-            classpath = '{}:{}'.format(
-                os.path.join(os.environ['MICRORTSPATH'], "lib/*"),
-                os.path.join(os.environ['MICRORTSPATH'], "bin")
-            )
-
-            self._logger.info('Generated classpath: ' + classpath)
-
-            subprocess.Popen(['java', '-cp', classpath, 'rts.MicroRTS', '-f', microrts_properties])
-
+            self._logger.info('Starting MicroRTS')            
+            subprocess.Popen(['java', '-cp', os.environ['MICRORTSPATH'], 'rts.MicroRTS', '-f', properties_file])
             self._logger.info('MicroRTS started')
 
         # now keep talking with the client

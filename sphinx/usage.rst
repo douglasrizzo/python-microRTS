@@ -107,27 +107,26 @@ are kept as default:
 Start microRTS. By now, you should see your Python agent interact with
 the game.
 
-Starting MicroRTS automatically (experimental)
+Starting microRTS automatically (experimental)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-MicroRTS can be started automatically by python-microRTS. This is useful
+microRTS can be started automatically by python-microRTS. This is useful
 in case you wish to run multiple games in a loop. In order to do that:
 
 * the ``MICRORTSPATH`` environment variable must be set, containing the
-  path to the directory that has the necessary libraries to run MicroRTS,
-  as well as MicroRTS ``.class`` files.
+  path to the microRTS JAR.
 * a properties file must be provided (like
   `this one <https://github.com/santiontanon/microrts/blob/master/resources/config.properties>`__),
-  containing the necessary information to start MicroRTS.
+  containing the necessary information to start microRTS.
 
 Start your controller with the following parameters (edit them as necessary):
 
 .. code:: python
 
-        ai.start(start_microrts=True, microrts_properties='my_file.properties')
+        ai.start(start_microrts=True, properties_file='my_file.properties')
 
 The following command in spawned using the `subprocess` package:
 
 ::
 
-    java -cp "${MICRORTSPATH}/lib/*:${MICRORTSPATH}/bin" rts.MicroRTS -f <microrts properties file>
+    java -cp ${MICRORTSPATH} rts.MicroRTS -f <properties_file>
