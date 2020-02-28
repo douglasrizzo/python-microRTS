@@ -20,9 +20,12 @@ project documentation `here <https://douglasrizzo.com.br/python-microRTS>`__.
 Installation
 ------------
 
+This version of python-microRTS is not available on PyPI. To install it
+directly from GitHub:
+
 .. code:: shell
 
-   pip install python-microRTS
+    pip install git+https://github.com/douglasrizzo/python-microRTS.git
 
 Overview
 --------
